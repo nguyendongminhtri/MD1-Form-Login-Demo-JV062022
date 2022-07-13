@@ -56,7 +56,25 @@
 <div class="container">
     <div class="row">
         <div class="col-12">
-            <h1 STYLE="color: blueviolet">WELCOME TO WEBSITE TRỘM CHÓ!</h1>
+            <table class="table" border="1" style="width: 100%; text-align: center">
+                <tr class="table-danger">
+                    <th>STT</th>
+                    <th>NAME</th>
+                    <th>ADDRESS</th>
+                    <th id="edit" >EDIT</th>
+                    <th id="delete" >DELETE</th>
+                </tr>
+                <tbody id="drawTable">
+                <!--    <tr>-->
+                <!--        <td>1</td>-->
+                <!--        <td>Tú Mỡ</td>-->
+                <!--    </tr>-->
+                <!--    <tr>-->
+                <!--        <td>2</td>-->
+                <!--        <td>Hùng Supper</td>-->
+                <!--    </tr>-->
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -191,11 +209,131 @@
 </footer>
 <!-- Footer -->
 <script>
+    class Students {
+        id;
+        name;
+        address;
+        constructor(id,name,address) {
+            this.id = id;
+            this.name = name;
+            this.address = address;
+        }
+
+        getId() {
+            return this.id;
+        }
+
+        setId(value) {
+            this.id = value;
+        }
+
+        getName() {
+            return this.name;
+        }
+
+        setName(value) {
+            this.name = value;
+        }
+
+        getAddress() {
+            return this.address;
+        }
+
+        setAddress(value) {
+            this.address = value;
+        }
+    }
     let username = window.localStorage.getItem('USERNAME_KEY');
     if(username!=null){
         document.getElementById('register').innerHTML = '';
         document.getElementById('login').innerHTML = username;
     }
+
+    function showListStdent() {
+        let listStudents = [];
+        let student1 = new Students(1,'Huy', 'Hà Nội')
+        let student2 = new Students(2,'Hùng', 'Nam Định')
+        listStudents.push(student1,student2);
+        let drawTable = '';
+        //Cách 1: Vẽ bằng cách cộng chuỗi thông thường trong '' các biến sẽ được biding qua ++
+        let class_tr = '';
+        let style_bt = '';
+        if(username==null){
+            document.getElementById('edit').style.display = 'none';
+            document.getElementById('delete').style.display = 'none';
+            style_bt = "display: none"
+            // document.getElementById('bt_edit').style.display = 'none';
+            // document.getElementById('bt_delete').style.display =  'none';
+        }
+        for (let i = 0; i < listStudents.length; i++) {
+            if(i%2==0){
+                class_tr= "table-primary"
+            } else {
+                class_tr = "table-warning"
+            }
+            // drawTable+= '<tr>'+
+            //     '<td>'+j+'</td>'+
+            //     '<td>'+listStudents[i]+'</td>'
+            // +'</tr>'
+
+            //Cách 2: Sử dụng String Templage JS6 chuỗi ở trong `` các biến sẽ được biding qua ${}
+            drawTable += `<tr class="${class_tr}">
+                        <td>${listStudents[i].id}</td>
+                        <td>${listStudents[i].name}</td>
+                        <td>${listStudents[i].address}</td>
+                        <td  style="${style_bt}"><button class="btn btn-primary" style="border-radius: 50%"  data-toggle="modal" data-target="#exampleModalEdit" data-whatever="${listStudents[i]}"><i class="bi bi-pencil"></i></button></td>
+                         <td style="${style_bt}"><button data-toggle="modal" data-target="#exampleModal" class="btn btn-danger" style="border-radius: 50%" ><i class="bi bi-x-square-fill"></i></button></td>
+                        </tr>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Delete Student</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure delete?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-danger" onclick="deleteStudent(${i})" data-dismiss="modal">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="exampleModalEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Student</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="recipient-name" class="col-form-label">Recipient:</label>
+            <input type="text" class="form-control" id="editStudent">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-warning" onclick="updateStudent(${i})" data-dismiss="modal">Edit Student</button>
+      </div>
+    </div>
+  </div>
+</div>
+`
+
+        }
+        document.getElementById('drawTable').innerHTML = drawTable;
+    }
+
+    showListStdent();
   function logOut() {
       window.localStorage.clear();
       window.location.reload();
